@@ -176,8 +176,94 @@
   </div>
 
   <script>
-    // Tu script queda tal cual, no se toca
-    // ...
-  </script>
+  function calcular() {
+    const capital = parseFloat(document.getElementById('capital').value);
+    const riesgoPorcentaje = parseFloat(document.getElementById('riesgo').value);
+    const entrada = parseFloat(document.getElementById('entrada').value);
+    const slTics = parseFloat(document.getElementById('slTics').value);
+    const tpTics = parseFloat(document.getElementById('tpTics').value);
+    const tipoOrden = (document.getElementById('type').value);
+    const simbolo = document.getElementById('symbol').value;
+    const apalancamiento = document.getElementById('apalancamiento').value;
+
+  // DEFINIR VALORES SEGÚN SÍMBOLO (TICS, DECIMALES)
+    let valorPorTickPorLote;
+    let valorTickPrecio;
+    let decimales;
+    let contratos;
+
+    if (simbolo === 'XAU/USD') {
+      valorPorTickPorLote = 1; // 1 USD por tic por lote estándar
+      valorTickPrecio = 0.01; // 1 tic = 0.01 en XAU/USD
+      decimales = 2; // 2 decimales en XAU/USD
+      contratos = 100000; //100,000 de  contratos
+    } else if (simbolo === 'EUR/USD') {
+      valorPorTickPorLote = 1; // 1 USD por pip por lote estándar
+      valorTickPrecio = 0.00001; // 1 pip = 0.0001 en EUR/USD
+      decimales = 5; // 5 decimales en EUR/USD
+      contratos = 100000; //100,000 de  contratos
+    }
+
+  // CALCULAR RIESGO
+    const RiesgoBruto = capital * (riesgoPorcentaje / 100);
+    const LotajeBruto = RiesgoBruto / (slTics * valorPorTickPorLote) 
+    const ComisionBruta = LotajeBruto * 7
+    const RiesgoNeto = RiesgoBruto - ComisionBruta
+    
+  // CALCULAR LOTAJE
+    const LotajeNeto = Math.round((RiesgoNeto / (slTics * valorPorTickPorLote)) * 100) / 100;
+
+  // CALCULAR COMISION TOTAL
+    const ComisionNeta = LotajeNeto * 7
+
+  // MARGEN
+    const MargenNeto = (((LotajeNeto * entrada) * contratos)/apalancamiento)
+  
+  // RIESGO / BENEFICIO
+    const rr = (tpTics / slTics);
+    
+  // DEFINIR PRECIOS DE TP Y SL
+    let precioTP, precioSL;
+
+    if (tipoOrden === 'buy') {
+      precioTP = entrada + (tpTics * valorTickPrecio);
+      precioSL = entrada - (slTics * valorTickPrecio);
+    } else {
+      precioTP = entrada - (tpTics * valorTickPrecio);
+      precioSL = entrada + (slTics * valorTickPrecio);
+    }
+    
+  // GANANCIA Y PÉRDIDA (USD)
+    const profitBruto = tpTics * valorPorTickPorLote * LotajeNeto;
+    const lossBruto = slTics * valorPorTickPorLote * LotajeNeto;
+    const profitNeto = profitBruto - ComisionNeta;
+    const lossNeto = lossBruto + ComisionNeta;
+
+  // GANANCIAS Y PÉRDIDAS (%)
+    const profitPorcent = (profitNeto / capital) * 100;
+    const lossPorcent = (lossNeto / capital) * 100;
+
+    const fmt = (n) =>
+      n.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+
+    document.getElementById('lotajeResult').textContent = `Lotaje: ${LotajeNeto.toFixed(2)} Lotes`;
+    document.getElementById('rrResult').textContent = `Riesgo/Beneficio: 1 : ${rr.toFixed(2)}`;
+    document.getElementById('MargenResult').textContent = `Margen: $${fmt(MargenNeto)}`;
+    document.getElementById('ComisionResult').textContent = `Comisión: $${fmt(ComisionNeta)}`;
+    document.getElementById('tpPriceResult').textContent = `Precio TP: ${precioTP.toFixed(decimales)}`;
+    document.getElementById('profitResult').textContent = `Profit Neto: $${fmt(profitNeto)} USD`;
+    document.getElementById('profitBrut').textContent = `Profit S/C: $${fmt(profitBruto)} USD`;
+    document.getElementById('Profit%').textContent = `Profit (%): ${profitPorcent.toFixed(2)}%`;
+    document.getElementById('slPriceResult').textContent = `Precio SL: ${precioSL.toFixed(decimales)}`;
+    document.getElementById('lossResult').textContent = `Pérdida Neta: -$${fmt(lossNeto)} USD`;
+    document.getElementById('LossBrut').textContent = `Pérdida S/C: -$${fmt(lossBruto)} USD`;
+    document.getElementById('Loss%').textContent = `Pérdida (%): ${lossPorcent.toFixed(2)}%`;
+    document.getElementById('resultCard').style.display = 'block';
+    document.getElementById('container').style.justifyContent = 'flex-start';
+  }
+</script>
 </body>
 </html>
