@@ -2,249 +2,170 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Calculadora Automática</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Calculadora de Lotaje</title>
   <style>
     body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-      background-color: #121212;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-
-    #container {
-      display: flex;
-      gap: 15px;
-      transition: all 0.5s ease;
-    }
-
-    .card {
-      background-color: #1e1e1e;
+      font-family: Arial, sans-serif;
       padding: 20px;
-      border-radius: 20px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.4);
-      width: 400px;
-      transition: all 0.5s ease;
+      margin: 0;
+      font-size: 18px;
+      box-sizing: border-box;
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 10px;
-      color: #fff;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 100%;
+    }
+
+    .inputs, .results {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
     label {
-      display: block;
-      margin-top: 9px;
-      font-size: 0.9rem;
+      font-weight: bold;
     }
 
-    input, select {
+    input {
+      padding: 10px;
+      font-size: 18px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
       width: 100%;
-      padding: 6px;
-      margin-top: 4px;
-      background-color: #2c2c2c;
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-size: 0.85rem;
     }
 
     button {
-      width: 100%;
-      margin-top: 15px;
-      padding: 8px;
-      background-color: #0a84ff;
-      color: white;
+      padding: 12px;
+      font-size: 18px;
       border: none;
-      border-radius: 10px;
-      font-size: 0.9rem;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
       cursor: pointer;
-      transition: background 0.3s ease;
     }
 
-    button:hover {
-      background-color: #006be6;
+    .output {
+      background-color: #f4f4f4;
+      padding: 15px;
+      border-radius: 5px;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
     }
 
-    #resultCard {
-      display: none;
+    .results-table {
+      overflow-x: auto;
     }
 
-    .result {
-      font-size: 1rem;
-      margin-top: 6px;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 16px;
     }
 
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      .inputs, .results {
+        flex: 1;
+        max-width: 48%;
+      }
+    }
   </style>
 </head>
 <body>
-  <div id="container">
-    <div class="card" id="inputCard">
-      <h2>DATOS</h2>
-
-      <label for="symbol">Divisa:</label>
-      <select id="symbol">
-        <option value="XAU/USD">XAU/USD</option>
-        <option value="EUR/USD">EUR/USD</option>
-      </select>
-
-      <label for="apalancamiento">Apalancamiento:</label>
-      <select id="apalancamiento">
-        <option value="25000">1:25000</option>
-        <option value="1000">1:1000</option>
-      </select>
-
+  <h2>Calculadora de Lotaje</h2>
+  <div class="container">
+    <div class="inputs">
       <label for="capital">Capital ($):</label>
-      <select id="capital">
-        <option value="5000">$5,000</option>
-        <option value="6000">$6,000</option>
-        <option value="10000">$10,000</option>
-        <option value="15000">$15,000</option>
-        <option value="20000">$20,000</option>
-        <option value="25000">$25,000</option>
-        <option value="50000">$50,000</option>
-        <option value="100000">$100,000</option>
-        <option value="200000">$200,000</option>
-      </select>
+      <input type="number" id="capital" step="0.01" />
 
-      <label for="entrada">Precio de Entrada:</label>
-      <input type="number" id="entrada" step="0.01" />
-      
-      <label for="type">Tipo de Orden:</label>
-      <select id="type">
-        <option value="buy">Buy</option>
-        <option value="sell">Sell</option>
-      </select>
+      <label for="riesgo">Riesgo por operación (%):</label>
+      <input type="number" id="riesgo" step="0.01" />
 
-      <label for="tpTics">Tics TP:</label>
-      <input type="number" id="tpTics" step="0.1" />
-      
-      <label for="slTics">Tics SL:</label>
-      <input type="number" id="slTics" step="0.1" />
+      <label for="sl">Stop Loss (pips):</label>
+      <input type="number" id="sl" step="0.1" />
 
-      <label for="riesgo">Riesgo (%):</label>
-      <select id="riesgo">
-        <option value="1">1%</option>
-        <option value="0.5">0.5%</option>
-      </select>
+      <label for="spread">Spread (pips):</label>
+      <input type="number" id="spread" step="0.1" />
+
+      <label for="tp">Take Profit (pips):</label>
+      <input type="number" id="tp" step="0.1" />
 
       <button onclick="calcular()">Calcular</button>
     </div>
 
-    <div class="card" id="resultCard">
-      <h2>RESULTADOS</h2>
-      <br>
-      <div class="result" id="lotajeResult"></div>
-      <div class="result" id="rrResult"></div>
-      <div class="result" id="MargenResult"></div>
-      <div class="result" id="ComisionResult"></div>
-      <br>
-      <div class="result" id="tpPriceResult"></div>
-      <div class="result" id="profitResult"></div>
-      <div class="result" id="profitBrut"></div>
-      <div class="result" id="Profit%"></div>
-      <br>
-      <div class="result" id="slPriceResult"></div>
-      <div class="result" id="lossResult"></div>
-      <div class="result" id="LossBrut"></div>
-      <div class="result" id="Loss%"></div>
+    <div class="results">
+      <div class="output" id="resultado"></div>
+      <div class="results-table" id="cuadroDatos"></div>
     </div>
   </div>
 
-<script>
-  function calcular() {
-    const capital = parseFloat(document.getElementById('capital').value);
-    const riesgoPorcentaje = parseFloat(document.getElementById('riesgo').value);
-    const entrada = parseFloat(document.getElementById('entrada').value);
-    const slTics = parseFloat(document.getElementById('slTics').value);
-    const tpTics = parseFloat(document.getElementById('tpTics').value);
-    const tipoOrden = (document.getElementById('type').value);
-    const simbolo = document.getElementById('symbol').value;
-    const apalancamiento = document.getElementById('apalancamiento').value;
+  <script>
+    function calcular() {
+      const capital = parseFloat(document.getElementById("capital").value);
+      const riesgo = parseFloat(document.getElementById("riesgo").value);
+      const sl = parseFloat(document.getElementById("sl").value);
+      const spread = parseFloat(document.getElementById("spread").value);
+      const tp = parseFloat(document.getElementById("tp").value);
 
-  // DEFINIR VALORES SEGÚN SÍMBOLO (TICS, DECIMALES)
-    let valorPorTickPorLote;
-    let valorTickPrecio;
-    let decimales;
-    let contratos;
+      if (isNaN(capital) || isNaN(riesgo) || isNaN(sl) || isNaN(spread) || isNaN(tp)) {
+        alert("Por favor, completa todos los campos.");
+        return;
+      }
 
-    if (simbolo === 'XAU/USD') {
-      valorPorTickPorLote = 1; // 1 USD por tic por lote estándar
-      valorTickPrecio = 0.01; // 1 tic = 0.01 en XAU/USD
-      decimales = 2; // 2 decimales en XAU/USD
-      contratos = 100000; //100,000 de  contratos
-    } else if (simbolo === 'EUR/USD') {
-      valorPorTickPorLote = 1; // 1 USD por pip por lote estándar
-      valorTickPrecio = 0.00001; // 1 pip = 0.0001 en EUR/USD
-      decimales = 5; // 5 decimales en EUR/USD
-      contratos = 100000; //100,000 de  contratos
+      const riesgoUSD = capital * (riesgo / 100);
+      const lotaje = riesgoUSD / (sl * 10);
+      const comisiones = lotaje * 7;
+      const gananciaBruta = tp * 10 * lotaje;
+      const gananciaNeta = gananciaBruta - comisiones;
+      const perdidaBruta = riesgoUSD;
+      const perdidaNeta = perdidaBruta + comisiones;
+      const rr = gananciaNeta / perdidaNeta;
+
+      document.getElementById("resultado").innerText = `Lotaje recomendado: ${lotaje.toFixed(2)} lotes`;
+
+      document.getElementById("cuadroDatos").innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Capital</td><td>$${capital.toFixed(2)}</td></tr>
+            <tr><td>Riesgo</td><td>${riesgo.toFixed(2)}%</td></tr>
+            <tr><td>Stop Loss</td><td>${sl.toFixed(1)} pips</td></tr>
+            <tr><td>Spread</td><td>${spread.toFixed(1)} pips</td></tr>
+            <tr><td>Take Profit</td><td>${tp.toFixed(1)} pips</td></tr>
+            <tr><td>Riesgo USD</td><td>$${riesgoUSD.toFixed(2)}</td></tr>
+            <tr><td>Comisiones</td><td>$${comisiones.toFixed(2)}</td></tr>
+            <tr><td>Ganancia bruta</td><td>$${gananciaBruta.toFixed(2)}</td></tr>
+            <tr><td>Ganancia neta</td><td>$${gananciaNeta.toFixed(2)}</td></tr>
+            <tr><td>Pérdida neta</td><td>$${perdidaNeta.toFixed(2)}</td></tr>
+            <tr><td>Relación R:R</td><td>${rr.toFixed(2)}:1</td></tr>
+          </tbody>
+        </table>
+      `;
     }
-
-  // CALCULAR RIESGO
-    const RiesgoBruto = capital * (riesgoPorcentaje / 100);
-    const LotajeBruto = RiesgoBruto / (slTics * valorPorTickPorLote) 
-    const ComisionBruta = LotajeBruto * 7
-    const RiesgoNeto = RiesgoBruto - ComisionBruta
-    
-  // CALCULAR LOTAJE
-    const LotajeNeto = Math.round((RiesgoNeto / (slTics * valorPorTickPorLote)) * 100) / 100;
-
-  // CALCULAR COMISION TOTAL
-    const ComisionNeta = LotajeNeto * 7
-
-  // MARGEN
-    const MargenNeto = (((LotajeNeto * entrada) * contratos)/apalancamiento)
-  
-  // RIESGO / BENEFICIO
-    const rr = (tpTics / slTics);
-    
-  // DEFINIR PRECIOS DE TP Y SL
-    let precioTP, precioSL;
-
-    if (tipoOrden === 'buy') {
-      precioTP = entrada + (tpTics * valorTickPrecio);
-      precioSL = entrada - (slTics * valorTickPrecio);
-    } else {
-      precioTP = entrada - (tpTics * valorTickPrecio);
-      precioSL = entrada + (slTics * valorTickPrecio);
-    }
-    
-  // GANANCIA Y PÉRDIDA (USD)
-    const profitBruto = tpTics * valorPorTickPorLote * LotajeNeto;
-    const lossBruto = slTics * valorPorTickPorLote * LotajeNeto;
-    const profitNeto = profitBruto - ComisionNeta;
-    const lossNeto = lossBruto + ComisionNeta;
-
-  // GANANCIAS Y PÉRDIDAS (%)
-    const profitPorcent = (profitNeto / capital) * 100;
-    const lossPorcent = (lossNeto / capital) * 100;
-
-    const fmt = (n) =>
-      n.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
-
-    document.getElementById('lotajeResult').textContent = `Lotaje: ${LotajeNeto.toFixed(2)} Lotes`;
-    document.getElementById('rrResult').textContent = `Riesgo/Beneficio: 1 : ${rr.toFixed(2)}`;
-    document.getElementById('MargenResult').textContent = `Margen: $${fmt(MargenNeto)}`;
-    document.getElementById('ComisionResult').textContent = `Comisión: $${fmt(ComisionNeta)}`;
-    document.getElementById('tpPriceResult').textContent = `Precio TP: ${precioTP.toFixed(decimales)}`;
-    document.getElementById('profitResult').textContent = `Profit Neto: $${fmt(profitNeto)} USD`;
-    document.getElementById('profitBrut').textContent = `Profit S/C: $${fmt(profitBruto)} USD`;
-    document.getElementById('Profit%').textContent = `Profit (%): ${profitPorcent.toFixed(2)}%`;
-    document.getElementById('slPriceResult').textContent = `Precio SL: ${precioSL.toFixed(decimales)}`;
-    document.getElementById('lossResult').textContent = `Pérdida Neta: -$${fmt(lossNeto)} USD`;
-    document.getElementById('LossBrut').textContent = `Pérdida S/C: -$${fmt(lossBruto)} USD`;
-    document.getElementById('Loss%').textContent = `Pérdida (%): ${lossPorcent.toFixed(2)}%`;
-    document.getElementById('resultCard').style.display = 'block';
-    document.getElementById('container').style.justifyContent = 'flex-start';
-  }
-</script>
+  </script>
 </body>
 </html>
