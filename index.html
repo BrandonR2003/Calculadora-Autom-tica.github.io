@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculadora de Lotaje</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Calculadora Automática</title>
+  <link rel="icon" href="logo.icon">
   <style>
     html, body {
       margin: 0;
@@ -13,93 +14,15 @@
       color: white;
       height: 100%;
       box-sizing: border-box;
-      overflow: hidden; /* ⛔️ Sin scroll al inicio */
-    }
-
-    body.show-scroll {
-      overflow-y: auto; /* ✅ Scroll solo cuando hay resultados */
-      max-height: 100vh;
     }
 
     #container {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
       padding: 20px;
       gap: 20px;
-      box-sizing: border-box;
-      transition: all 0.3s ease;
-    }
-
-    .card {
-      background-color: #1E1E1E;
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
-      width: 100%;
-      max-width: 400px;
-      box-sizing: border-box;
-    }
-
-    .card h1 {
-      font-size: 24px;
-      margin-bottom: 16px;
-      text-align: center;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 14px;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 16px;
-      border: none;
-      border-radius: 12px;
-      background-color: #2A2A2A;
-      color: white;
-      font-size: 16px;
-      box-sizing: border-box;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: #007AFF;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background-color: #005FCC;
-    }
-
-    #resultCard {
-      display: none;
-    }
-
-    @media (max-width: 480px) {
-      .card {
-        padding: 20px;
-      }
-
-      input, select, button {
-        font-size: 15px;
-        padding: 10px;
-      }
-
-      .card h1 {
-        font-size: 20px;
-      }
+      align-items: stretch;
+      justify-content: flex-start;
     }
 
     @media (min-width: 768px) {
@@ -110,60 +33,238 @@
         padding: 40px;
       }
     }
+
+    .card {
+      background-color: #1e1e1e;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+      width: 100%;
+      max-width: 400px;
+      transition: all 0.5s ease;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: #fff;
+      font-size: 1.6rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-size: 1rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 4px;
+      background-color: #2c2c2c;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 12px;
+      background-color: #0a84ff;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #006be6;
+    }
+
+    #resultCard {
+      display: none;
+    }
+
+    .result {
+      font-size: 1.05rem;
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+
+    /* Scroll horizontal en móviles */
+    .card {
+      overflow-x: auto;
+    }
   </style>
 </head>
 <body>
   <div id="container">
-    <div class="card">
-      <h1>Calculadora de Lotaje</h1>
-      <label for="capital">Capital (USD)</label>
-      <input type="number" id="capital" placeholder="Ej: 1000" />
+    <div class="card" id="inputCard">
+      <h2>DATOS</h2>
+      <!-- Tu formulario sigue igual -->
+      <label for="symbol">Divisa:</label>
+      <select id="symbol">
+        <option value="XAU/USD">XAU/USD</option>
+        <option value="EUR/USD">EUR/USD</option>
+      </select>
 
-      <label for="riesgo">Riesgo por operación (%)</label>
-      <input type="number" id="riesgo" value="1" placeholder="Ej: 1" />
+      <label for="apalancamiento">Apalancamiento:</label>
+      <select id="apalancamiento">
+        <option value="25000">1:25000</option>
+        <option value="1000">1:1000</option>
+      </select>
 
-      <label for="stoploss">Tamaño del Stop Loss (pips)</label>
-      <input type="number" id="stoploss" placeholder="Ej: 20" />
+      <label for="capital">Capital ($):</label>
+      <select id="capital">
+        <option value="5000">$5,000</option>
+        <option value="6000">$6,000</option>
+        <option value="10000">$10,000</option>
+        <option value="15000">$15,000</option>
+        <option value="20000">$20,000</option>
+        <option value="25000">$25,000</option>
+        <option value="50000">$50,000</option>
+        <option value="100000">$100,000</option>
+        <option value="200000">$200,000</option>
+      </select>
 
-      <label for="par">Par</label>
-      <select id="par">
-        <option value="eurusd">EUR/USD</option>
+      <label for="entrada">Precio de Entrada:</label>
+      <input type="number" id="entrada" step="0.01" />
+      
+      <label for="type">Tipo de Orden:</label>
+      <select id="type">
+        <option value="buy">Buy</option>
+        <option value="sell">Sell</option>
+      </select>
+
+      <label for="tpTics">Tics TP:</label>
+      <input type="number" id="tpTics" step="0.1" />
+      
+      <label for="slTics">Tics SL:</label>
+      <input type="number" id="slTics" step="0.1" />
+
+      <label for="riesgo">Riesgo (%):</label>
+      <select id="riesgo">
+        <option value="1">1%</option>
+        <option value="0.5">0.5%</option>
       </select>
 
       <button onclick="calcular()">Calcular</button>
     </div>
 
     <div class="card" id="resultCard">
-      <h1>Resultado</h1>
-      <p id="resultadoTexto"></p>
+      <h2>RESULTADOS</h2>
+      <br>
+      <div class="result" id="lotajeResult"></div>
+      <div class="result" id="rrResult"></div>
+      <div class="result" id="MargenResult"></div>
+      <div class="result" id="ComisionResult"></div>
+      <br>
+      <div class="result" id="tpPriceResult"></div>
+      <div class="result" id="profitResult"></div>
+      <div class="result" id="profitBrut"></div>
+      <div class="result" id="Profit%"></div>
+      <br>
+      <div class="result" id="slPriceResult"></div>
+      <div class="result" id="lossResult"></div>
+      <div class="result" id="LossBrut"></div>
+      <div class="result" id="Loss%"></div>
     </div>
   </div>
 
   <script>
-    function calcular() {
-      const capital = parseFloat(document.getElementById('capital').value);
-      const riesgo = parseFloat(document.getElementById('riesgo').value) / 100;
-      const stoploss = parseFloat(document.getElementById('stoploss').value);
+  function calcular() {
+    const capital = parseFloat(document.getElementById('capital').value);
+    const riesgoPorcentaje = parseFloat(document.getElementById('riesgo').value);
+    const entrada = parseFloat(document.getElementById('entrada').value);
+    const slTics = parseFloat(document.getElementById('slTics').value);
+    const tpTics = parseFloat(document.getElementById('tpTics').value);
+    const tipoOrden = (document.getElementById('type').value);
+    const simbolo = document.getElementById('symbol').value;
+    const apalancamiento = document.getElementById('apalancamiento').value;
 
-      if (isNaN(capital) || isNaN(riesgo) || isNaN(stoploss) || stoploss <= 0) {
-        alert('Por favor, completa todos los campos correctamente.');
-        return;
-      }
+  // DEFINIR VALORES SEGÚN SÍMBOLO (TICS, DECIMALES)
+    let valorPorTickPorLote;
+    let valorTickPrecio;
+    let decimales;
+    let contratos;
 
-      const riesgoUSD = capital * riesgo;
-      const valorPorPip = riesgoUSD / stoploss;
-      const lotaje = valorPorPip / 10;
-
-      document.getElementById('resultadoTexto').innerText = `
-        Capital: $${capital.toFixed(2)}
-        \nRiesgo: ${(riesgo * 100).toFixed(2)}% ($${riesgoUSD.toFixed(2)})
-        \nStop Loss: ${stoploss.toFixed(1)} pips
-        \nTamaño de lote: ${lotaje.toFixed(2)}
-      `;
-
-      document.getElementById('resultCard').style.display = 'block';
-      document.body.classList.add('show-scroll');
+    if (simbolo === 'XAU/USD') {
+      valorPorTickPorLote = 1; // 1 USD por tic por lote estándar
+      valorTickPrecio = 0.01; // 1 tic = 0.01 en XAU/USD
+      decimales = 2; // 2 decimales en XAU/USD
+      contratos = 100000; //100,000 de  contratos
+    } else if (simbolo === 'EUR/USD') {
+      valorPorTickPorLote = 1; // 1 USD por pip por lote estándar
+      valorTickPrecio = 0.00001; // 1 pip = 0.0001 en EUR/USD
+      decimales = 5; // 5 decimales en EUR/USD
+      contratos = 100000; //100,000 de  contratos
     }
-  </script>
+
+  // CALCULAR RIESGO
+    const RiesgoBruto = capital * (riesgoPorcentaje / 100);
+    const LotajeBruto = RiesgoBruto / (slTics * valorPorTickPorLote) 
+    const ComisionBruta = LotajeBruto * 7
+    const RiesgoNeto = RiesgoBruto - ComisionBruta
+    
+  // CALCULAR LOTAJE
+    const LotajeNeto = Math.round((RiesgoNeto / (slTics * valorPorTickPorLote)) * 100) / 100;
+
+  // CALCULAR COMISION TOTAL
+    const ComisionNeta = LotajeNeto * 7
+
+  // MARGEN
+    const MargenNeto = (((LotajeNeto * entrada) * contratos)/apalancamiento)
+  
+  // RIESGO / BENEFICIO
+    const rr = (tpTics / slTics);
+    
+  // DEFINIR PRECIOS DE TP Y SL
+    let precioTP, precioSL;
+
+    if (tipoOrden === 'buy') {
+      precioTP = entrada + (tpTics * valorTickPrecio);
+      precioSL = entrada - (slTics * valorTickPrecio);
+    } else {
+      precioTP = entrada - (tpTics * valorTickPrecio);
+      precioSL = entrada + (slTics * valorTickPrecio);
+    }
+    
+  // GANANCIA Y PÉRDIDA (USD)
+    const profitBruto = tpTics * valorPorTickPorLote * LotajeNeto;
+    const lossBruto = slTics * valorPorTickPorLote * LotajeNeto;
+    const profitNeto = profitBruto - ComisionNeta;
+    const lossNeto = lossBruto + ComisionNeta;
+
+  // GANANCIAS Y PÉRDIDAS (%)
+    const profitPorcent = (profitNeto / capital) * 100;
+    const lossPorcent = (lossNeto / capital) * 100;
+
+    const fmt = (n) =>
+      n.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+
+    document.getElementById('lotajeResult').textContent = Lotaje: ${LotajeNeto.toFixed(2)} Lotes;
+    document.getElementById('rrResult').textContent = Riesgo/Beneficio: 1 : ${rr.toFixed(2)};
+    document.getElementById('MargenResult').textContent = Margen: $${fmt(MargenNeto)};
+    document.getElementById('ComisionResult').textContent = Comisión: $${fmt(ComisionNeta)};
+    document.getElementById('tpPriceResult').textContent = Precio TP: ${precioTP.toFixed(decimales)};
+    document.getElementById('profitResult').textContent = Profit Neto: $${fmt(profitNeto)} USD;
+    document.getElementById('profitBrut').textContent = Profit S/C: $${fmt(profitBruto)} USD;
+    document.getElementById('Profit%').textContent = Profit (%): ${profitPorcent.toFixed(2)}%;
+    document.getElementById('slPriceResult').textContent = Precio SL: ${precioSL.toFixed(decimales)};
+    document.getElementById('lossResult').textContent = Pérdida Neta: -$${fmt(lossNeto)} USD;
+    document.getElementById('LossBrut').textContent = Pérdida S/C: -$${fmt(lossBruto)} USD;
+    document.getElementById('Loss%').textContent = Pérdida (%): ${lossPorcent.toFixed(2)}%;
+    document.getElementById('resultCard').style.display = 'block';
+    document.getElementById('container').style.justifyContent = 'flex-start';
+  }
+</script>
 </body>
 </html>
